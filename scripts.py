@@ -1,11 +1,7 @@
 from words import all_words
 
-max_len = 0
+total_sum = sum([len(i) for i in all_words])
 
-for i in all_words:
-    if len(i) > max_len:
-        max_len = len(i)
-
-print(max_len)
+print(total_sum)
 
             

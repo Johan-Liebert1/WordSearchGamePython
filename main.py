@@ -1,6 +1,6 @@
 from words import all_words
 import random
-
+from termcolor import colored
 
 def get_words(number):
     words = []
@@ -28,7 +28,10 @@ def print_board(board):
     for i in range(len(board)):
         string += '\n\n'
         for j in range(len(board)):
-            string +=  board[i][j] + "    "
+            if (board[i][j].isdigit()):
+                string +=  board[i][j] + "    "
+            else:
+                string += colored(board[i][j] , 'green') + "    "
 
     print(string)
 
@@ -38,43 +41,88 @@ def add_words_to_board(board):
 
     words = get_words(10)
 
-    direction = 'horizonal' if random.randint(0,1) == 0 else 'vertical'
+    for i in range(10):
+        direction = 'h' if random.randint(1,100) % 2 == 0 else 'v'
+        new_board = add(words[i].upper(), board, direction)
 
-    new_board = add('CONSPICUOUS', board, 'vertical')
+    print(words)
     return new_board
 
 
+def is_space_occupied(word, direction, rand_row, rand_col):
+    # count = 0
+    if direction == 'h':
+        for count in range(len(word)):
+            if board[rand_row][rand_col + count] != '0' and board[rand_row][rand_col + count] != word[count]:
+                return True
+
+            else:
+                if rand_col + count == len(board) - 1:
+                    rand_col , count = 0, 0
+                else:
+                    continue
+
+    else:
+        for count in range(len(word)):
+            if board[rand_row + count][rand_col] != '0' and board[rand_row + count][rand_col] != word[count]:
+                return True
+
+            else:
+                if rand_row + count == len(board) - 1:
+                    rand_row , count = 0, 0
+                else:
+                    continue
+    return False
+
+def get_random_values():
+    return random.randint(0, len(board) - 1), random.randint(0, len(board) - 1)
+    
+        
+
+# need to check whether some space is occupied or not by another letter
+# avg word length = 7.409
 def add(word, board, direction):
     count = 0
     # for horizontal
-    row = random.randint(0, len(board) - 1)
-    rand_col = random.randint(0, len(board) - 1)
+    if direction == 'h':
+        while True:
+            row, rand_col = get_random_values()
+            if is_space_occupied(word, 'h', row, rand_col) == True:
+                continue
+            else:
+                break
     
     # for vertical
-    rand_row = random.randint(0, len(board) - 1)
-    col = random.randint(0, len(board) - 1)
+    if direction == 'v':
+        while True:
+            rand_row, col = get_random_values()
+            if is_space_occupied(word, 'v', rand_row, col) == True:
+                continue
+            else:
+                break
 
-    # add in rows
 
     for char in word:
 
-        if direction == 'horizontal':
+        if direction == 'h':
             board[row][rand_col + count] = char
 
             if count + rand_col == len(board) - 1: 
-                count, rand_col, rand_row = 0, 0, 0
+                count, rand_col = 0, 0
 
             else:
                 count += 1
 
-        else:
+        elif direction == 'v':
             board[rand_row + count][col] = char
 
             if count + rand_row == len(board) - 1: 
-                count, rand_col, rand_row = 0, 0, 0
+                count, rand_row = 0, 0
 
             else:
                 count += 1
+        
+    print_board(board)
     
     return board
 
