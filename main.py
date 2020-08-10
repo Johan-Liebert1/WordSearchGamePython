@@ -173,9 +173,10 @@ def put_letters_on_grid(crossword):
     y = 15
     # print(crossword)
     for row in range(len(crossword)):
-        y += 40 * (row + 1)
+        y = 15 + 40 * (row)
+        x = 15
         for col in range(len(crossword)):
-            x += 40 * (col + 1)
+            x = 15 + 40 * (col)
             if crossword[row][col] != '0':
                 text = FONT.render(crossword[row][col], 1, green)
             else:
@@ -188,6 +189,7 @@ board = create_board(15)
 
 crossword = main()
 
+print_board(crossword)
 
 while run:
     for event in pygame.event.get():
