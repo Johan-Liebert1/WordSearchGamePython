@@ -1,6 +1,14 @@
 from words import all_words
 import random
 from termcolor import colored
+import pygame
+
+white = (200, 200, 200)
+black = (0,0,0)
+pygame.font.init()
+green = (0, 150, 0)
+FONT = pygame.font.SysFont("arial", 16)
+
 
 def get_words(number):
     words = []
@@ -45,33 +53,46 @@ def add_words_to_board(board):
         direction = 'h' if random.randint(1,100) % 2 == 0 else 'v'
         new_board = add(words[i].upper(), board, direction)
 
-    print(words)
+    # print(words)
     return new_board
 
 
 def is_space_occupied(word, direction, rand_row, rand_col):
-    # count = 0
+    count = 0
     if direction == 'h':
-        for count in range(len(word)):
-            if board[rand_row][rand_col + count] != '0' and board[rand_row][rand_col + count] != word[count]:
-                return True
-
-            else:
+        for _ in range(len(word)):
+            if board[rand_row][rand_col + count].isdigit():
+                # print_board(board)
                 if rand_col + count == len(board) - 1:
                     rand_col , count = 0, 0
-                else:
-                    continue
+                else: count += 1
 
-    else:
-        for count in range(len(word)):
-            if board[rand_row + count][rand_col] != '0' and board[rand_row + count][rand_col] != word[count]:
+            elif board[rand_row][rand_col + count] == word[count]:
+                # print_board(board)
+                if rand_col + count == len(board) - 1:
+                    rand_col , count = 0, 0
+                else: count += 1
+            
+            else:
                 return True
 
-            else:
+    else:
+        for _ in range(len(word)):
+            if board[rand_row + count][rand_col].isdigit():
+                # print_board(board)
                 if rand_row + count == len(board) - 1:
                     rand_row , count = 0, 0
-                else:
-                    continue
+                else: count += 1
+
+            elif board[rand_row + count][rand_col] == word[count]:
+                # print_board(board)
+                if rand_row + count == len(board) - 1:
+                    rand_row , count = 0, 0
+                else: count += 1
+            
+            else:
+                return True
+
     return False
 
 def get_random_values():
@@ -122,19 +143,60 @@ def add(word, board, direction):
             else:
                 count += 1
         
-    print_board(board)
+    # print_board(board)
     
     return board
 
 
 def main():
     crossword = add_words_to_board(board)
-    print_board(crossword)
+    return crossword
 
+pygame.init()
+window = pygame.display.set_mode((600, 600))
+window.fill(white)
+
+def create_grid():
+    w = 600 // 15
+    width = 600
+    x, y = 0,0
+
+    for _ in range(15):
+        pygame.draw.line(window, black, (x,0), (x,width))
+        pygame.draw.line(window, black, (0, y), (width, y))
+
+        y += w 
+        x += w   
+
+def put_letters_on_grid(crossword):
+    x = 15
+    y = 15
+    # print(crossword)
+    for row in range(len(crossword)):
+        y += 40 * (row + 1)
+        for col in range(len(crossword)):
+            x += 40 * (col + 1)
+            if crossword[row][col] != '0':
+                text = FONT.render(crossword[row][col], 1, green)
+            else:
+                text = FONT.render(crossword[row][col], 1, black)
+
+            window.blit(text, (x,y))
+
+run = True
 board = create_board(15)
 
-if __name__ == "__main__":
-    main()
+crossword = main()
+
+
+while run:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            run = False
+    create_grid()
+    put_letters_on_grid(crossword)
+    pygame.display.update()
+
 
 
 

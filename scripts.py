@@ -1,7 +1,15 @@
-from words import all_words
+lst = [i for i in range(1,11)]
 
-total_sum = sum([len(i) for i in all_words])
+for i in lst:
+    if i % 2 == 0: 
+        print(f'Inside first if, i = {i}')
 
-print(total_sum)
+    if i % 5 == 0:
+        print(f'Inside second if, i = {i}')
+
+    else:
+        print(f'Inside else, i = {i}')
+
+
 
             
